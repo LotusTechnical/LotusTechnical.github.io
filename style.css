@@ -272,7 +272,7 @@ nav {
   -webkit-box-flex: 1;
       -ms-flex: 1;
           flex: 1;
-  background-color: #005391;
+  /* background-color: #005391; */
   -webkit-transition: 0.25s;
   transition: 0.25s;
 }
