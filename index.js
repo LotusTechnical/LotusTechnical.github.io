@@ -1,32 +1,60 @@
+var oldSelection = null;
+
 $(document).ready(function() {
-    // console.log(document.location.hostname);
+    // Switch pages loaded for the two domains
+    let host = document.location.hostname;
+    var pageFolder = "pages/";
+
+    console.log(host);
+
+    if (host === "lotushealthcaresolutions.com") {
+        pageFolder += "health/";
+    } else {
+        pageFolder += "technical/";
+    }
 
     // Set landing as the default home page
-    $("main").load("pages/landing.html");
+    $("main").load(pageFolder + "/landing.html");
+    
+    // Setup nav
+    $("nav").load(pageFolder + "/nav.html", function() {
+        // Sidebar popout
+        $("html").click(function (e) {
+            let selectedID = $(e.target)[0].id;
 
-    // Setup nav button styles
-    $("nav").load("pages/nav.html", function() {
-        // $(document).click(function(e) {
-        //     if (!e.hasClass("side-bar-button")) {
-        //         $("#side-bar").removeClass("active");
-        //     }
-        // });
+            switch(selectedID) {
+                case "icon-info":
+                    $("#side-bar").load(pageFolder + "pieces/side-info.html");
+                    toggleSideBar($("#side-bar"), selectedID);
+                    break;
+                case "link-employment-forms":
+                    $("#side-bar").load(pageFolder + "pieces/side-employment-forms.html");
+                    toggleSideBar($("#side-bar"), selectedID);
+                    break;
+                default:
+                    $("#side-bar").removeClass("active");
+            }
+        });
 
-        // Add and remove active state
+        // Add or remove active state
         $("nav").on("click", "li", function() {
-            $("li.active").removeClass("active");
-            $(this).addClass("active");
+            if($(this).hasClass("page")) {
+                $("li.active").removeClass("active");
+                $(this).addClass("active");
+            }
         });
 
         // Main navigation links
-        $("#logo-technical").click(function() {
-            $("main").load("pages/landing.html");
+        $("#logo").click(function() {
+            $("main").load(pageFolder + "/landing.html");
+            $("#link-clients, #link-job-seekers").removeClass("active");
+            $("#link-landing").addClass("active");
         });
         $("#link-landing").click(function() {
-            $("main").load("pages/landing.html");
+            $("main").load(pageFolder + "/landing.html");
         });
         $("#link-clients").click(function() {
-            $("main").load("pages/clients.html", function() {
+            $("main").load(pageFolder + "/clients.html", function() {
                 // Info bubbles
                 $(".info-bubble").click(function() {
                     toggleActivePopup($(this));
@@ -34,44 +62,42 @@ $(document).ready(function() {
             });
         });
         $("#link-job-seekers").click(function() {
-            $("main").load("pages/job-seekers.html", function() {
+            $("main").load(pageFolder + "/job-seekers.html", function() {
                 // Info bubbles
                 $(".info-bubble").click(function() {
                     toggleActivePopup($(this));
                 });
             });
         });
-
-        // Sidebar popout
-        $("#link-employment-forms").click(function() {
-            $("#side-bar").load("pages/pieces/side-employment-forms.html");
-            toggleActive($("#side-bar"));
-        });
-        $("#link-resume").click(function() {
-            $("#side-bar").load("pages/pieces/side-phone.html");
-            toggleActive($("#side-bar"));
-        });
-        $(".nav-external-link").click(function() {
-            $("#side-bar").load("pages/pieces/side-phone.html");
-            toggleActive($("#side-bar"));
-        });
     });
 });
 
-function toggleActive(element) {
-    if (element.hasClass("active")) {
-        element.removeClass("active");
+function toggleSideBar(e, newSelection) {
+    if (e.hasClass("active")) {
+        if ((newSelection !== "icon-info" && newSelection !== "link-employment-forms") || newSelection === oldSelection) {
+            e.removeClass("active");
+        }
     } else {
-        element.addClass("active");
+        e.addClass("active");
+    }
+
+    oldSelection = newSelection;
+}
+
+function toggleActive(e) {
+    if (e.hasClass("active")) {
+        e.removeClass("active");
+    } else {
+        e.addClass("active");
     }
 }
 
-function toggleActivePopup(element) {
-    if (element.hasClass("active")) {
-        element.removeClass("active");
-        element.next().removeClass("active");
+function toggleActivePopup(e) {
+    if (e.hasClass("active")) {
+        e.removeClass("active");
+        e.next().removeClass("active");
     } else {
-        element.addClass("active");
-        element.next().addClass("active");
+        e.addClass("active");
+        e.next().addClass("active");
     }
 }
